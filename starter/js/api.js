@@ -27,7 +27,9 @@ export async function request(method, path, data, options = {}) {
     init.body = JSON.stringify(data);
   }
 
-  const response = await fetch(API + path, init);
+  // third-party APIs come with their own full URL
+  const url = path.startsWith("https://") ? path : API + path;
+  const response = await fetch(url, init);
 
   if (!response.ok) {
     // an error body that isn't JSON is no reason to hide the status

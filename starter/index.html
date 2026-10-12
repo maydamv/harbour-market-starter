@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/data.css">
   <!-- Lecture 8: styles for loading, errors and ratings are ready; the markup and the JavaScript are yours -->
   <link rel="stylesheet" href="css/fetch.css">
+  <link rel="stylesheet" href="css/currency.css">
   <!-- A module: deferred automatically, its own scope, imports the rest -->
   <script type="module" src="js/main.js"></script>
 </head>
@@ -48,6 +49,16 @@
         <button type="button" data-filter="music" aria-pressed="false">Music</button>
         <button type="button" data-filter="crafts" aria-pressed="false">Crafts</button>
         <button type="button" data-filter="drinks" aria-pressed="false">Drinks</button>
+      </div>
+      <div class="currency">
+        <label for="currency">Prices in</label>
+        <select id="currency" disabled>
+          <option value="EUR">€ EUR</option>
+          <option value="GBP">£ GBP</option>
+          <option value="USD">$ USD</option>
+          <option value="CHF">CHF</option>
+        </select>
+        <small class="rates-note"></small>
       </div>
       <div class="finder">
         <label for="vendor-search">Find a stall</label>

@@ -7,6 +7,9 @@ export const state = {
   status: "loading", // "loading" · "ready" · "error"
   error: null,      // the last failed request, while status is "error"
   stalls: [],       // from GET /stalls
+  currency: "EUR",  // the chosen one; prices on the server stay in euros
+  rates: null,      // { date, GBP, USD, CHF } once they've arrived
+  ratesStatus: "loading", // "loading" · "ready" · "error"
 };
 
 // Derived, never stored: what should be on screen right now?

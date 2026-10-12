@@ -1,0 +1,15 @@
+/* Issue #7 · prices in the visitor's currency */
+.currency { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.8rem; margin: -0.5rem 0 1.5rem; }
+.currency[hidden] { display: none; }
+.currency label { font-weight: 700; }
+.currency select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--night-2);
+  border: 2px solid var(--line);
+  border-radius: 99px;
+  padding: 0.35rem 0.9rem;
+}
+.currency select:disabled { opacity: 0.5; }
+.currency select:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.rates-note { color: var(--ink-2); }

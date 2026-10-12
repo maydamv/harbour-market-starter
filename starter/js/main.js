@@ -5,6 +5,7 @@ import { render } from "./render.js";
 import { setupMenu } from "./menu.js";
 import { setupTickets } from "./tickets.js";
 import { getJSON } from "./api.js";
+import { setupCurrency } from "./currency.js";
 
 const filters = document.querySelector(".filters");
 const list = document.querySelector(".vendor-list");
@@ -58,4 +59,5 @@ document.querySelector(".load-error button").addEventListener("click", () => {
 setupMenu();
 setupTickets();
 load();
+setupCurrency(update); // not awaited: the rates and the stalls load side by side
 await loadStalls();

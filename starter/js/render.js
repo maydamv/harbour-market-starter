@@ -1,5 +1,6 @@
 import { state, visibleStalls } from "./state.js";
 import { describe } from "./api.js";
+import { price, renderCurrency } from "./currency.js";
 
 const template = document.querySelector("#stall-template");
 const list = document.querySelector(".vendor-list");
@@ -35,7 +36,7 @@ function card(stall) {
   li.querySelector(".tag").textContent = stall.tag;
   li.querySelector("h3").textContent = stall.name;
   li.querySelector(".blurb").textContent = stall.blurb;
-  li.querySelector(".price").textContent = stall.price === 0 ? "free" : `from €${stall.price}`;
+  li.querySelector(".price").textContent = price(stall.price);
   li.querySelector(".rating").textContent = rating(stall);
   li.querySelector(".badge").hidden = !stall.soldOut;
 
@@ -78,6 +79,7 @@ export function render() {
   else if (state.status === "error") count.textContent = "";
   else count.textContent = visible.length === total ? `${total} stalls` : `${visible.length} of ${total} stalls`;
   savedCount.textContent = state.saved.size ? `♥ ${state.saved.size} saved` : "";
+  renderCurrency();
 
   // Controls are part of the page too: draw them from state
   // (only when different: rewriting the box you're typing in can move the cursor)
