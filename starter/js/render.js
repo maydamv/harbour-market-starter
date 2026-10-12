@@ -1,5 +1,5 @@
-import { stalls } from "./data.js";
 import { state, visibleStalls } from "./state.js";
+import { describe } from "./api.js";
 
 const template = document.querySelector("#stall-template");
 const list = document.querySelector(".vendor-list");
@@ -7,6 +7,20 @@ const filters = document.querySelector(".filters"); // module scope: main.js has
 const count = document.querySelector(".filter-count");
 const savedCount = document.querySelector(".saved-count");
 const search = document.querySelector("#vendor-search");
+const errorText = document.querySelector(".load-error p");
+const retry = document.querySelector(".load-error button");
+
+function rating(stall) {
+  if (!stall.reviewCount) return "no reviews yet";
+  return `★ ${stall.rating} · ${stall.reviewCount} ${stall.reviewCount === 1 ? "review" : "reviews"}`;
+}
+
+function message(text) {
+  const li = document.createElement("li");
+  li.className = "empty";
+  li.textContent = text; // textContent: their words stay text
+  return li;
+}
 
 // Data in, element out
 function card(stall) {
@@ -22,6 +36,7 @@ function card(stall) {
   li.querySelector("h3").textContent = stall.name;
   li.querySelector(".blurb").textContent = stall.blurb;
   li.querySelector(".price").textContent = stall.price === 0 ? "free" : `from €${stall.price}`;
+  li.querySelector(".rating").textContent = rating(stall);
   li.querySelector(".badge").hidden = !stall.soldOut;
 
   const isSaved = state.saved.has(stall.id);
@@ -35,20 +50,33 @@ function card(stall) {
 // Draws everything that depends on state. Safe to call any number of times.
 export function render() {
   const visible = visibleStalls();
+  const total = state.stalls.length;
 
+  list.setAttribute("aria-busy", String(state.status === "loading"));
   if (visible.length) {
     list.replaceChildren(...visible.map(card));
+  } else if (state.status === "loading") {
+    list.replaceChildren(message("Loading the vendors…"));
+  } else if (state.status === "error") {
+    list.replaceChildren();
+  } else if (total === 0) {
+    list.replaceChildren(message("No stalls yet. Come back closer to the night."));
   } else {
-    const empty = document.createElement("li");
-    empty.className = "empty";
-    empty.textContent = `No stall matches “${state.query}”.`; // textContent: their words stay text
-    list.replaceChildren(empty);
+    list.replaceChildren(message(`No stall matches “${state.query}”.`));
   }
+
+  // the alert stays in the page; only its text changes, so it's announced
+  errorText.textContent = state.status === "error"
+    ? `We couldn't load the vendors: ${describe(state.error)}.`
+    : "";
+  retry.hidden = state.status !== "error";
 
   for (const button of filters.querySelectorAll("button")) {
     button.setAttribute("aria-pressed", String(button.dataset.filter === state.tag));
   }
-  count.textContent = visible.length === stalls.length ? "" : `${visible.length} of ${stalls.length} stalls`;
+  if (state.status === "loading") count.textContent = "Loading the vendors…";
+  else if (state.status === "error") count.textContent = "";
+  else count.textContent = visible.length === total ? `${total} stalls` : `${visible.length} of ${total} stalls`;
   savedCount.textContent = state.saved.size ? `♥ ${state.saved.size} saved` : "";
 
   // Controls are part of the page too: draw them from state

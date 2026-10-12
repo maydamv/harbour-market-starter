@@ -4,9 +4,25 @@ import { save, load } from "./storage.js";
 import { render } from "./render.js";
 import { setupMenu } from "./menu.js";
 import { setupTickets } from "./tickets.js";
+import { getJSON } from "./api.js";
 
 const filters = document.querySelector(".filters");
 const list = document.querySelector(".vendor-list");
+const statusLine = document.querySelector(".status");
+
+async function loadStalls() {
+  state.status = "loading";
+  render();
+  try {
+    state.stalls = await getJSON("/stalls");
+    state.status = "ready";
+  } catch (error) {
+    console.error(error);
+    state.status = "error";
+    state.error = error;
+  }
+  render();
+}
 
 // Every change goes through here: draw, then remember
 function update() {
@@ -34,7 +50,12 @@ list.addEventListener("click", (event) => {
   update();
 });
 
+document.querySelector(".load-error button").addEventListener("click", () => {
+  statusLine.focus(); // the button hides itself, so focus needs somewhere to go
+  loadStalls();
+});
+
 setupMenu();
 setupTickets();
 load();
-render();
+await loadStalls();
